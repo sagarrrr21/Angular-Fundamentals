@@ -1,0 +1,19 @@
+<div class="container">
+  <h1>Todo App</h1>
+
+  <div class="filters">
+    <button (click)="filter = 'all'">All</button>
+    <button (click)="filter = 'open'">Open</button>
+    <button (click)="filter = 'done'">done</button>
+  </div>
+
+  <p *ngIf="filteredTasks.length === 0">No tasks available</p>
+
+  <ul *ngIf="filteredTasks.length > 0">
+    <li *ngFor="let task of filteredTasks">
+      <input type="checkbox" [checked]="task.status" (change)="toggleTask(task)" />
+      <span>{{ task.title }}</span>
+      <input type="text" [(ngModel)]="task.title" />
+    </li>
+  </ul>
+</div>

@@ -1,0 +1,19 @@
+.container {
+  max-width: 500px;
+  margin: auto;
+  font-family: Arial;
+}
+
+.filters button {
+  margin-right: 8px;
+}
+
+li {
+  margin: 10px 0;
+}
+
+.edit-box {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
