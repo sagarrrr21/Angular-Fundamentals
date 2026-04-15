@@ -1,59 +1,139 @@
-# PracticeProject
+# Vinyl Vault -- Angular Exercise
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.7.
+Build a Vinyl Vault application. Users register, log in, manage a vinyl record collection (CRUD), view a dashboard, and customise the app theme.
 
-## Development server
+**Tech stack:** Angular (standalone components), Angular Material, Reactive Forms, JSON Server, chart.js/ng2-charts, ngx-color-picker.
 
-To start a local development server, run:
+---
 
-```bash
-ng serve
-```
+## Data Models
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+**User** -- id, name, email, password
 
-## Code scaffolding
+**Record** -- id, title, artist, genre (Rock | Jazz | Electronic | Hip-Hop | Classical), releaseYear, condition (Mint | Near Mint | Very Good | Good | Fair), status (Wishlist | Owned | Sold), pressings (string[]), collectorNotes, referenceLinks (string[]), tags (string[]), userId
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+**Theme** -- id, name, color (hex), active (boolean)
 
-```bash
-ng generate component component-name
-```
+---
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Authentication
 
-```bash
-ng generate --help
-```
+| Page       | Route       | Fields                                    |
+|------------|-------------|-------------------------------------------|
+| Register   | `/register` | Name, Email, Password, Confirm Password   |
+| Login      | `/login`    | Email, Password                           |
+	
+- All fields required. Email must be valid. Password minlength 6. Confirm Password must match Password (custom validator).
+- Register: POST to json-server, snackbar on success, redirect to login.
+- Login: validate against json-server, store user in localStorage, redirect to `/dashboard`. Snackbar on failure.
+- Each page links to the other.
+- `canActivate` guard on all routes except login and register. Redirect unauthenticated users to `/login`.
 
-## Building
+---
 
-To build the project run:
+## Layout
 
-```bash
-ng build
-```
+Shared layout (header + router-outlet + footer) for all authenticated routes only. Login/Register have no layout.
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+- **Header:** MatToolbar -- app title, nav links (Dashboard, Collection, Themes) with active highlighting, user name, logout button.
+- **Footer:** copyright line.
 
-## Running unit tests
+---
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## Dashboard (`/dashboard`)
 
-```bash
-ng test
-```
+- Summary cards: total records, count per status (Wishlist, Owned, Sold).
+- Pie/doughnut chart: records by genre.
+- Bar chart: records by status.
 
-## Running end-to-end tests
+---
 
-For end-to-end (e2e) testing, run:
+## Collection (`/collection`)
 
-```bash
-ng e2e
-```
+### List
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+MatTable -- columns: Title, Artist, Genre, Condition, Status, Release Year, Actions (Edit, Delete). Add pagination (5/10/25), sorting on all columns, and search by title. "Add Record" button above the table.
 
-## Additional Resources
+### Add/Edit Dialog (MatDialog, 4 tabs)
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+| Tab | Fields | Validations |
+|-----|--------|-------------|
+| Album Info | Title, Artist, Genre (select), Release Year (datepicker) | Title: required, minlength 3. Artist: required, minlength 2. Genre: required. Year: required. |
+| Condition & Pressings | Condition (slider: Mint to Fair, 1-5), Status (select), Pressings (dynamic list of text inputs) | Condition: required. Status: required. At least one pressing. |
+| Extras | Collector Notes (textarea), Reference Links (dynamic list), Tags (chips) | Notes: required. Links: optional. At least one tag. |
+| Summary | Read-only view of all tabs | No editable fields. |
+
+- Buttons on every tab: Cancel, Back (hidden on tab 1), Continue (replaced by Save on tab 4).
+- Save disabled if any tab is invalid.
+- Show error/success icon on each tab label based on that tab's validity.
+- Edit mode pre-fills all fields from the selected record.
+
+### Delete
+
+Confirmation dialog before delete. Snackbar after.
+
+---
+
+## Status Highlight Directive
+
+Custom attribute directive on the Status column: Wishlist = blue (`#e3f2fd`), Owned = green (`#e8f5e9`), Sold = grey (`#e0e0e0`).
+
+---
+
+## Themes (`/themes`)
+
+MatTable -- columns: Theme Name, Color (swatch + hex), Applied (active indicator), Actions (Apply, Delete). "Add Theme" button above the table.
+
+- Add/Edit dialog: Name (required, minlength 3), Color (color picker). Reactive form.
+- Only one theme active at a time. Apply sets CSS variable `--primary-color` on `:root` and updates json-server. App toolbar and accents use this variable.
+- Load and apply the active theme on app startup.
+- Delete shows confirmation dialog.
+
+---
+
+## Snackbar
+
+MatSnackBar (~3s) after: register success, login failure, record add/update/delete, theme apply/delete, any HTTP error.
+
+---
+
+## Routing
+
+| Route         | Auth Required |
+|---------------|---------------|
+| `/login`      | No            |
+| `/register`   | No            |
+| `/dashboard`  | Yes           |
+| `/collection` | Yes           |
+| `/themes`     | Yes           |
+| `**`          | Redirect to login |
+
+Default authenticated route: `/dashboard`.
+
+---
+
+## General Rules
+
+- Angular Material for all UI components.
+- Reactive Forms for all forms. No template-driven forms.
+- JSON Server for backend (port 3000, collections: users, records, themes).
+- Standalone components only. No NgModules.
+- Feature folder structure: auth, layout, dashboard, collection, theme, models.
+- Handle HTTP errors with snackbar messages.
+
+---
+
+## Checklist
+
+- [ ] Register and login work end-to-end with validation and snackbar feedback.
+- [ ] Auth guard protects all routes; unauthenticated users redirected to login.
+- [ ] Layout wraps authenticated pages; login/register have no layout.
+- [ ] Dashboard shows summary cards and charts.
+- [ ] Collection table has pagination, sorting, and search.
+- [ ] Record dialog has 4 tabs with validation, tab icons, and navigation buttons.
+- [ ] Save disabled when any tab is invalid.
+- [ ] Delete shows confirmation dialog.
+- [ ] Status directive colours the status column.
+- [ ] Theme table with apply/delete; applying a theme changes app colours.
+- [ ] All forms use Reactive Forms.
+- [ ] Feature folder structure is followed.
