@@ -1,20 +1,16 @@
-# Vinyl Vault -- Angular Exercise
+# Book Management Angular Exercise
 
-Build a Vinyl Vault application. Users register, log in, manage a vinyl record collection (CRUD), view a dashboard, and customise the app theme.
+Build a Book Management application. Users register, log in, manage a Book record collection (CRUD), view a dashboard, and customise the app theme.
 
 **Tech stack:** Angular (standalone components), Angular Material, Reactive Forms, JSON Server, chart.js/ng2-charts, ngx-color-picker.
 
----
-
 ## Data Models
 
-**User** -- id, name, email, password
+**User** id, name, email, password
 
-**Record** -- id, title, artist, genre (Rock | Jazz | Electronic | Hip-Hop | Classical), releaseYear, condition (Mint | Near Mint | Very Good | Good | Fair), status (Wishlist | Owned | Sold), pressings (string[]), collectorNotes, referenceLinks (string[]), tags (string[]), userId
+**Record** id, title, artist, genre (Rock | Jazz | Electronic | Hip-Hop | Classical), releaseYear, condition (Mint | Near Mint | Very Good | Good | Fair), status (Wishlist | Owned | Sold), pressings (string[]), collectorNotes, referenceLinks (string[]), tags (string[]), userId
 
-**Theme** -- id, name, color (hex), active (boolean)
-
----
+**Theme** id, name, color (hex), active (boolean)
 
 ## Authentication
 
@@ -29,16 +25,12 @@ Build a Vinyl Vault application. Users register, log in, manage a vinyl record c
 - Each page links to the other.
 - `canActivate` guard on all routes except login and register. Redirect unauthenticated users to `/login`.
 
----
-
 ## Layout
 
 Shared layout (header + router-outlet + footer) for all authenticated routes only. Login/Register have no layout.
 
-- **Header:** MatToolbar -- app title, nav links (Dashboard, Collection, Themes) with active highlighting, user name, logout button.
-- **Footer:** copyright line.
-
----
+**Header:** MatToolbar app title, nav links (Dashboard, Collection, Themes) with active highlighting, user name, logout button.
+**Footer:** copyright line.
 
 ## Dashboard (`/dashboard`)
 
@@ -46,13 +38,11 @@ Shared layout (header + router-outlet + footer) for all authenticated routes onl
 - Pie/doughnut chart: records by genre.
 - Bar chart: records by status.
 
----
-
 ## Collection (`/collection`)
 
 ### List
 
-MatTable -- columns: Title, Artist, Genre, Condition, Status, Release Year, Actions (Edit, Delete). Add pagination (5/10/25), sorting on all columns, and search by title. "Add Record" button above the table.
+MatTable columns: Title, Artist, Genre, Condition, Status, Release Year, Actions (Edit, Delete). Add pagination (5/10/25), sorting on all columns, and search by title. "Add Record" button above the table.
 
 ### Add/Edit Dialog (MatDialog, 4 tabs)
 
@@ -72,30 +62,22 @@ MatTable -- columns: Title, Artist, Genre, Condition, Status, Release Year, Acti
 
 Confirmation dialog before delete. Snackbar after.
 
----
-
 ## Status Highlight Directive
 
 Custom attribute directive on the Status column: Wishlist = blue (`#e3f2fd`), Owned = green (`#e8f5e9`), Sold = grey (`#e0e0e0`).
 
----
-
 ## Themes (`/themes`)
 
-MatTable -- columns: Theme Name, Color (swatch + hex), Applied (active indicator), Actions (Apply, Delete). "Add Theme" button above the table.
+MatTable columns: Theme Name, Color (swatch + hex), Applied (active indicator), Actions (Apply, Delete). "Add Theme" button above the table.
 
 - Add/Edit dialog: Name (required, minlength 3), Color (color picker). Reactive form.
 - Only one theme active at a time. Apply sets CSS variable `--primary-color` on `:root` and updates json-server. App toolbar and accents use this variable.
 - Load and apply the active theme on app startup.
 - Delete shows confirmation dialog.
 
----
-
 ## Snackbar
 
 MatSnackBar (~3s) after: register success, login failure, record add/update/delete, theme apply/delete, any HTTP error.
-
----
 
 ## Routing
 
@@ -110,8 +92,6 @@ MatSnackBar (~3s) after: register success, login failure, record add/update/dele
 
 Default authenticated route: `/dashboard`.
 
----
-
 ## General Rules
 
 - Angular Material for all UI components.
@@ -120,8 +100,6 @@ Default authenticated route: `/dashboard`.
 - Standalone components only. No NgModules.
 - Feature folder structure: auth, layout, dashboard, collection, theme, models.
 - Handle HTTP errors with snackbar messages.
-
----
 
 ## Checklist
 
